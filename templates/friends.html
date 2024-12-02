@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Friends</h2>
+<form method="POST">
+    <label for="friend_email">Friend's Email:</label>
+    <input type="email" name="friend_email" id="friend_email" required><br>
+    <button type="submit">Send Friend Request</button>
+</form>
+
+<h3>Friendship Requests</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Friend</th>
+            <th>Status</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for friend in friends %}
+        <tr>
+            <td>{{ friend.friend_id }}</td>
+            <td>{{ friend.status }}</td>
+            <td>
+                <form method="POST" action="{{ url_for('update_friendship', friendship_id=friend.id) }}">
+                    <select name="status">
+                        <option value="accepted">Accept</option>
+                        <option value="rejected">Reject</option>
+                    </select>
+                    <button type="submit">Update</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Your Goals</h2>
+<form method="POST">
+    <label for="goal_type">Goal Type:</label>
+    <input type="text" name="goal_type" id="goal_type" required><br>
+
+    <label for="target_value">Target Value:</label>
+    <input type="number" name="target_value" id="target_value" required><br>
+
+    <label for="end_date">End Date:</label>
+    <input type="date" name="end_date" id="end_date" required><br>
+
+    <button type="submit">Add Goal</button>
+</form>
+
+<h3>Existing Goals</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Goal Type</th>
+            <th>Target</th>
+            <th>Progress</th>
+            <th>End Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for goal in goals %}
+        <tr>
+            <td>{{ goal.goal_type }}</td>
+            <td>{{ goal.target_value }}</td>
+            <td>{{ goal.progress }}</td>
+            <td>{{ goal.end_date.strftime('%Y-%m-%d') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

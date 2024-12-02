@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Your Fitness Goals</h1>
+{% if user.goals %}
+<ul>
+    {% for goal in user.goals %}
+        <li>{{ goal.goal_type }}: {{ goal.target_value }} (Progress: {{ goal.progress }})</li>
+    {% endfor %}
+</ul>
+{% else %}
+<p>No goals set yet.</p>
+{% endif %}
+<a href="{{ url_for('add_goal') }}">Set a New Goal</a>
+{% endblock %}

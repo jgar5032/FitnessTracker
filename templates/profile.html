@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome, {{ user.name }}</h1>
+<p>Email: {{ user.email }}</p>
+
+<!-- Display current details -->
+<h2>Your Profile Details</h2>
+<p>Height: {{ user.height or "Not set" }} cm</p>
+<p>Weight: {{ user.weight or "Not set" }} kg</p>
+<p>Age: {{ user.age or "Not set" }} years</p>
+<p>Gender: {{ user.gender or "Not set" }}</p>
+<p>Fitness Level: {{ user.fitness_level or "Not set" }}</p>
+
+<!-- Form to update details -->
+<h2>Update Your Profile</h2>
+<form method="POST">
+    <label for="height">Height (cm):</label>
+    <input type="number" name="height" id="height" value="{{ user.height or '' }}" step="0.1"><br>
+    
+    <label for="weight">Weight (kg):</label>
+    <input type="number" name="weight" id="weight" value="{{ user.weight or '' }}" step="0.1"><br>
+    
+    <label for="age">Age:</label>
+    <input type="number" name="age" id="age" value="{{ user.age or '' }}"><br>
+    
+    <label for="gender">Gender:</label>
+    <select name="gender" id="gender">
+        <option value="" {% if not user.gender %}selected{% endif %}>Select</option>
+        <option value="Male" {% if user.gender == 'Male' %}selected{% endif %}>Male</option>
+        <option value="Female" {% if user.gender == 'Female' %}selected{% endif %}>Female</option>
+        <option value="Other" {% if user.gender == 'Other' %}selected{% endif %}>Other</option>
+    </select><br>
+    
+    <label for="fitness_level">Fitness Level:</label>
+    <select name="fitness_level" id="fitness_level">
+        <option value="" {% if not user.fitness_level %}selected{% endif %}>Select</option>
+        <option value="Beginner" {% if user.fitness_level == 'Beginner' %}selected{% endif %}>Beginner</option>
+        <option value="Intermediate" {% if user.fitness_level == 'Intermediate' %}selected{% endif %}>Intermediate</option>
+        <option value="Advanced" {% if user.fitness_level == 'Advanced' %}selected{% endif %}>Advanced</option>
+    </select><br>
+    
+    <button type="submit">Update Profile</button>
+</form>
+
+<!-- Display activities -->
+<h2>Your Logged Activities</h2>
+{% if activities %}
+<table>
+    <thead>
+        <tr>
+            <th>Activity Type</th>
+            <th>Duration (minutes)</th>
+            <th>Distance (km)</th>
+            <th>Steps</th>
+            <th>Calories Burned</th>
+            <th>Date & Time</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for activity in activities %}
+        <tr>
+            <td>{{ activity.activity_type }}</td>
+            <td>{{ activity.duration }}</td>
+            <td>{{ activity.distance or "N/A" }}</td>
+            <td>{{ activity.steps or "N/A" }}</td>
+            <td>{{ activity.calories or "N/A" }}</td>
+            <td>{{ activity.date_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% else %}
+<p>No activities logged yet.</p>
+{% endif %}
+{% endblock %}
