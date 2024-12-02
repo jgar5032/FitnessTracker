@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+    <h1>Your Metrics</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>Metric</th>
+                <th>Value</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Body Mass Index (BMI)</td>
+                <td>{{ bmi if bmi else "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Target Heart Rate</td>
+                <td>{{ target_heart_rate if target_heart_rate else "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Average Steps per Day</td>
+                <td>{{ avg_steps if avg_steps else "N/A" }}</td>
+            </tr>
+            <tr>
+                <td>Average Activity Duration (minutes)</td>
+                <td>{{ avg_duration if avg_duration else "N/A" }}</td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+{% endblock %}

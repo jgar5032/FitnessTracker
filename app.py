@@ -106,26 +106,6 @@ def add_activity():
         return redirect(url_for('profile'))
     return render_template('add_activity.html')
 
-@app.route('/goals', methods=['GET', 'POST'])
-def goals():
-    if 'user_id' not in session:
-        flash('Please log in to access your goals.')
-        return redirect(url_for('login'))
-
-    user = User.query.get(session['user_id'])
-
-    if request.method == 'POST':
-        goal_type = request.form['goal_type']
-        target_value = request.form['target_value']
-        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
-        new_goal = Goal(user_id=user.id, goal_type=goal_type, target_value=target_value, end_date=end_date)
-        db.session.add(new_goal)
-        db.session.commit()
-        flash('New goal added successfully.')
-
-    goals = Goal.query.filter_by(user_id=user.id).all()
-    return render_template('goals.html', user=user, goals=goals)
-
 @app.route('/friends', methods=['GET', 'POST'])
 def friends():
     if 'user_id' not in session:
@@ -134,13 +114,21 @@ def friends():
 
     user = User.query.get(session['user_id'])
 
+    # Handle sending friend requests
     if request.method == 'POST':
         friend_email = request.form['friend_email']
         friend = User.query.filter_by(email=friend_email).first()
-        if friend and friend.id != user.id:
-            existing_friendship = Friendship.query.filter_by(user_id=user.id, friend_id=friend.id).first()
+
+        if friend and friend.id != user.id:  # Ensure the friend exists and isn't the same user
+            # Check for existing friendship or pending request
+            existing_friendship = Friendship.query.filter(
+                ((Friendship.user_id == user.id) & (Friendship.friend_id == friend.id)) |
+                ((Friendship.user_id == friend.id) & (Friendship.friend_id == user.id))
+            ).first()
+
             if not existing_friendship:
-                new_friendship = Friendship(user_id=user.id, friend_id=friend.id)
+                # Create a pending friend request
+                new_friendship = Friendship(user_id=user.id, friend_id=friend.id, status='pending')
                 db.session.add(new_friendship)
                 db.session.commit()
                 flash('Friend request sent successfully.')
@@ -149,17 +137,162 @@ def friends():
         else:
             flash('Invalid email address or user not found.')
 
-    friends = Friendship.query.filter_by(user_id=user.id).all()
-    return render_template('friends.html', user=user, friends=friends)
+    # Get pending requests where the user is the recipient
+    incoming_requests = Friendship.query.filter_by(friend_id=user.id, status='pending').all()
+
+    # Get accepted friendships
+    accepted_friendships = Friendship.query.filter(
+        ((Friendship.user_id == user.id) | (Friendship.friend_id == user.id)) &
+        (Friendship.status == 'accepted')
+    ).all()
+
+    # Calculate metrics for the logged-in user
+    user_activities = Activity.query.filter_by(user_id=user.id).all()
+    user_bmi = round(user.weight / ((user.height / 100) ** 2), 2) if user.height and user.weight else None
+    user_avg_steps = round(sum(a.steps for a in user_activities if a.steps) / len(user_activities), 2) if user_activities else None
+    user_avg_duration = round(sum(a.duration for a in user_activities if a.duration) / len(user_activities), 2) if user_activities else None
+    user_goals_met = Goal.query.filter_by(user_id=user.id).filter(Goal.progress >= Goal.target_value).count()
+    user_goals_unmet = Goal.query.filter_by(user_id=user.id).filter(Goal.progress < Goal.target_value).count()
+
+    # Prepare friends data
+    friends_data = []
+    for friendship in accepted_friendships:
+        friend = friendship.friend if friendship.user_id == user.id else friendship.user
+        activities = Activity.query.filter_by(user_id=friend.id).all()
+        bmi = round(friend.weight / ((friend.height / 100) ** 2), 2) if friend.height and friend.weight else None
+        avg_steps = round(sum(a.steps for a in activities if a.steps) / len(activities), 2) if activities else None
+        avg_duration = round(sum(a.duration for a in activities if a.duration) / len(activities), 2) if activities else None
+        goals_met = Goal.query.filter_by(user_id=friend.id).filter(Goal.progress >= Goal.target_value).count()
+        goals_unmet = Goal.query.filter_by(user_id=friend.id).filter(Goal.progress < Goal.target_value).count()
+
+        friends_data.append({
+            'name': friend.name,
+            'email': friend.email,
+            'bmi': bmi,
+            'avg_steps': avg_steps,
+            'avg_duration': avg_duration,
+            'goals_met': goals_met,
+            'goals_unmet': goals_unmet,
+        })
+
+    # Add the logged-in user to the friends_data list for comparison
+    friends_data.append({
+        'name': user.name,
+        'email': user.email,
+        'bmi': user_bmi,
+        'avg_steps': user_avg_steps,
+        'avg_duration': user_avg_duration,
+        'goals_met': user_goals_met,
+        'goals_unmet': user_goals_unmet,
+    })
+
+    # Sorting logic
+    sort_category = request.args.get('sort', 'bmi')
+    reverse_sort = sort_category not in ['bmi']  # BMI is sorted ascending; others descending
+
+    # Sort with N/A (None values) pushed to the bottom
+    def sorting_key(item):
+        value = item.get(sort_category)
+        if value is None:
+            # Assign inf or -inf based on sorting direction
+            return float('inf') if not reverse_sort else float('-inf')
+        return value
+
+    friends_data.sort(key=sorting_key, reverse=reverse_sort)
+
+    return render_template(
+        'friends.html',
+        user=user,
+        incoming_requests=incoming_requests,
+        accepted_friends=friends_data,
+        sort_category=sort_category,
+    )
 
 @app.route('/update_friendship/<int:friendship_id>', methods=['POST'])
 def update_friendship(friendship_id):
     friendship = Friendship.query.get(friendship_id)
-    if 'status' in request.form:
-        friendship.status = request.form['status']
-        db.session.commit()
-        flash('Friendship status updated successfully.')
+
+    # Ensure the user is logged in and is the recipient of the request
+    if 'user_id' not in session or friendship.friend_id != session['user_id']:
+        flash('Unauthorized action.')
+        return redirect(url_for('friends'))
+
+    # Update status based on the action
+    friendship.status = request.form['status']
+    db.session.commit()
+    flash('Friendship status updated successfully.')
     return redirect(url_for('friends'))
+
+@app.route('/goals', methods=['GET', 'POST'])
+def goals():
+    if 'user_id' not in session:
+        flash('Please log in to access your goals.')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+
+    # Add a new goal
+    if request.method == 'POST' and 'goal_type' in request.form:
+        goal_type = request.form['goal_type']
+        target_value = request.form['target_value']
+        end_date = datetime.strptime(request.form['end_date'], '%Y-%m-%d')
+        new_goal = Goal(user_id=user.id, goal_type=goal_type, target_value=target_value, end_date=end_date)
+        db.session.add(new_goal)
+        db.session.commit()
+        flash('New goal added successfully.')
+
+    # Fetch only goals that are not yet marked as "met"
+    active_goals = Goal.query.filter_by(user_id=user.id).filter(Goal.progress < Goal.target_value).all()
+    return render_template('goals.html', user=user, goals=active_goals)
+
+
+@app.route('/update_goal/<int:goal_id>', methods=['POST'])
+def update_goal(goal_id):
+    if 'user_id' not in session:
+        flash('Please log in to update goals.')
+        return redirect(url_for('login'))
+
+    goal = Goal.query.get(goal_id)
+    if goal and goal.user_id == session['user_id']:
+        status = request.form['status']
+        if status == 'met':
+            goal.progress = goal.target_value  # Mark as "met"
+            db.session.commit()
+            flash('Goal marked as met and removed from the list.')
+        elif status == 'not_met':
+            flash('Goal status remains unchanged.')
+
+    return redirect(url_for('goals'))
+
+
+@app.route('/metrics')
+def metrics():
+    if 'user_id' not in session:
+        flash('Please log in to access your metrics.')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    activities = Activity.query.filter_by(user_id=user.id).all()
+
+    # Metrics calculations
+    bmi = None
+    target_heart_rate = None
+    avg_steps = None
+    avg_duration = None
+
+    if user.weight and user.height:
+        bmi = round(user.weight / ((user.height / 100) ** 2), 2)  # Convert height to meters
+
+    if user.age:
+        target_heart_rate = f"{int((220 - user.age) * 0.5)} - {int((220 - user.age) * 0.85)} bpm"
+
+    if activities:
+        avg_steps = round(sum(activity.steps for activity in activities if activity.steps) / len(activities), 2)
+        avg_duration = round(sum(activity.duration for activity in activities if activity.duration) / len(activities), 2)
+
+    return render_template('metrics.html', user=user, bmi=bmi, target_heart_rate=target_heart_rate,
+                           avg_steps=avg_steps, avg_duration=avg_duration)
+
 
 @app.route('/logout')
 def logout():

@@ -1,37 +1,77 @@
 {% extends "base.html" %}
 {% block content %}
-<h2>Your Friends</h2>
-<form method="POST">
-    <label for="friend_email">Friend's Email:</label>
-    <input type="email" name="friend_email" id="friend_email" required><br>
-    <button type="submit">Send Friend Request</button>
-</form>
+<div class="container">
+    <h2>Your Friends</h2>
+    <form method="POST">
+        <label for="friend_email">Friend's Email:</label>
+        <input type="email" name="friend_email" id="friend_email" required>
+        <button type="submit">Send Friend Request</button>
+    </form>
 
-<h3>Friendship Requests</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Friend</th>
-            <th>Status</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for friend in friends %}
-        <tr>
-            <td>{{ friend.friend_id }}</td>
-            <td>{{ friend.status }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('update_friendship', friendship_id=friend.id) }}">
-                    <select name="status">
-                        <option value="accepted">Accept</option>
-                        <option value="rejected">Reject</option>
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+    <!-- Display incoming friend requests -->
+    <h3>Pending Friend Requests</h3>
+    {% if incoming_requests %}
+    <table>
+        <thead>
+            <tr>
+                <th>From</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for request in incoming_requests %}
+            <tr>
+                <td>{{ request.user.name }} ({{ request.user.email }})</td>
+                <td>
+                    <form method="POST" action="{{ url_for('update_friendship', friendship_id=request.id) }}">
+                        <button name="status" value="accepted">Accept</button>
+                        <button name="status" value="rejected">Reject</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p>No pending friend requests.</p>
+    {% endif %}
+
+    <!-- Display comparison section -->
+    <h3>Compare Friends</h3>
+    <form method="GET" action="{{ url_for('friends') }}">
+        <label for="sort_category">Sort By:</label>
+        <select name="sort" id="sort_category" onchange="this.form.submit()">
+            <option value="bmi" {% if sort_category == 'bmi' %}selected{% endif %}>BMI (Lower is better)</option>
+            <option value="avg_steps" {% if sort_category == 'avg_steps' %}selected{% endif %}>Average Steps (Higher is better)</option>
+            <option value="avg_duration" {% if sort_category == 'avg_duration' %}selected{% endif %}>Average Activity Duration (Higher is better)</option>
+        </select>
+    </form>
+    
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>BMI</th>
+                <th>Average Steps</th>
+                <th>Average Activity Duration</th>
+                <th>Goals Met</th>
+                <th>Goals Unmet</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for friend in accepted_friends %}
+            <tr>
+                <td>{{ friend.name }}</td>
+                <td>{{ friend.email }}</td>
+                <td>{{ friend.bmi if friend.bmi is not none else 'N/A' }}</td>
+                <td>{{ friend.avg_steps if friend.avg_steps is not none else 'N/A' }}</td>
+                <td>{{ friend.avg_duration if friend.avg_duration is not none else 'N/A' }}</td>
+                <td>{{ friend.goals_met }}</td>
+                <td>{{ friend.goals_unmet }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>    
+</div>
 {% endblock %}

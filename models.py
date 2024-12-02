@@ -14,9 +14,10 @@ class User(db.Model):
     age = db.Column(db.Integer, nullable=True)
     gender = db.Column(db.String(10), nullable=True)
     fitness_level = db.Column(db.String(20), nullable=True)
+
     activities = db.relationship('Activity', back_populates='user', cascade="all, delete-orphan")
     fitness_goals = db.relationship('Goal', back_populates='user', cascade="all, delete-orphan")
-    friends = db.relationship('Friendship', back_populates='user', cascade="all, delete-orphan")
+    friends = db.relationship('Friendship', foreign_keys='Friendship.user_id', back_populates='user', cascade="all, delete-orphan")
 
 class Activity(db.Model):
     __tablename__ = 'activities'
@@ -45,6 +46,12 @@ class Friendship(db.Model):
     __tablename__ = 'friendships'
     id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
-    friend_id = db.Column(db.Integer, nullable=False)
+    friend_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     status = db.Column(db.String(20), default='pending', nullable=False)
-    user = db.relationship('User', back_populates='friends')
+
+    user = db.relationship('User', foreign_keys=[user_id], back_populates='friends')
+    friend = db.relationship('User', foreign_keys=[friend_id])
+
+    # Ensure unique friendships between user and friend
+    __table_args__ = (db.UniqueConstraint('user_id', 'friend_id', name='unique_friendship'),)
+

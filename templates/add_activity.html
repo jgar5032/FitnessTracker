@@ -1,17 +1,24 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Log Activity</h1>
-<form method="POST" action="{{ url_for('add_activity') }}">
-    <label for="activity_type">Activity Type:</label>
-    <input type="text" name="activity_type" id="activity_type" required><br>
-    <label for="duration">Duration (minutes):</label>
-    <input type="number" name="duration" id="duration" required><br>
-    <label for="distance">Distance (km):</label>
-    <input type="number" step="0.1" name="distance" id="distance"><br>
-    <label for="steps">Steps:</label>
-    <input type="number" name="steps" id="steps"><br>
-    <label for="calories">Calories Burned:</label>
-    <input type="number" name="calories" id="calories"><br>
-    <button type="submit">Log Activity</button>
-</form>
+<div class="container">
+    <h1>Log Activity</h1>
+    <form method="POST" action="{{ url_for('add_activity') }}">
+        <label for="activity_type">Activity Type:</label>
+        <input type="text" name="activity_type" id="activity_type" required>
+
+        <label for="duration">Duration (minutes):</label>
+        <input type="number" name="duration" id="duration" required>
+
+        <label for="distance">Distance (km):</label>
+        <input type="number" step="0.1" name="distance" id="distance">
+
+        <label for="steps">Steps:</label>
+        <input type="number" name="steps" id="steps">
+
+        <label for="calories">Calories Burned:</label>
+        <input type="number" name="calories" id="calories">
+
+        <button type="submit">Log Activity</button>
+    </form>
+</div>
 {% endblock %}

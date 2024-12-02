@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Fitness Tracker</title>
@@ -13,12 +14,13 @@
             <a href="{{ url_for('add_activity') }}">Log Activity</a>
             <a href="{{ url_for('goals') }}">Goals</a>
             <a href="{{ url_for('friends') }}">Friends</a>
+            <a href="{{ url_for('metrics') }}">Metrics</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
             <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('register') }}">Register</a>
         {% endif %}
-    </nav>
+    </nav>    
     <hr>
     {% block content %}{% endblock %}
 </body>

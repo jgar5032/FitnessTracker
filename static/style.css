@@ -1,31 +1,139 @@
-body {
-    font-family: Arial, sans-serif;
+/* General Reset */
+* {
     margin: 0;
     padding: 0;
-    background-color: #f4f4f4;
-    color: #333;
+    box-sizing: border-box;
 }
 
+/* Body Styling */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9; /* Maintain light background */
+    color: #333;
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+}
+
+/* Navigation Bar */
 nav {
-    background: #333;
+    background: #4CAF50; /* Retain green background */
     color: #fff;
-    padding: 0.5em 1em;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 }
 
 nav a {
-    color: #fff;
-    margin: 0 1em;
+    color: white;
     text-decoration: none;
+    margin: 0 10px;
+    font-weight: bold;
 }
 
-.content {
-    padding: 2em;
+nav a:hover {
+    text-decoration: underline;
 }
 
+/* Center Container */
+.container {
+    max-width: 600px;
+    margin: 50px auto; /* Center horizontally with spacing from top */
+    padding: 30px;
+    background: white; /* White background for content */
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center content inside */
+    text-align: center;
+}
+
+/* Form Styling */
 form {
-    margin-bottom: 1.5em;
+    display: flex;
+    flex-direction: column;
+    width: 100%; /* Ensure it spans the container width */
+    gap: 15px; /* Add spacing between fields */
 }
 
-.messages {
-    color: red;
+form label {
+    font-weight: bold;
+    align-self: flex-start; /* Align labels to the left */
+}
+
+form input, form select, form button {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 1rem;
+    width: 100%; /* Full width */
+}
+
+form button {
+    background-color: #4CAF50;
+    color: white;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+form button:hover {
+    background-color: #45a049;
+}
+
+/* Headings */
+h1, h2 {
+    font-size: 1.8rem;
+    margin-bottom: 20px;
+    color: #2c3e50;
+    text-align: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .container {
+        padding: 20px;
+    }
+
+    form input, form select, form button {
+        font-size: 0.9rem;
+    }
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    text-align: left;
+    padding: 10px 15px; /* Increase padding for better spacing */
+}
+
+th {
+    background-color: #f4f4f9;
+    font-weight: bold;
+}
+
+tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+td:first-child {
+    width: 50%; /* Allocate more width to the 'Name' column */
+}
+
+td:last-child {
+    width: 50%; /* Allocate more width to the 'Email' column */
+}
+
+/* Dropdown Styling */
+select {
+    padding: 5px;
+    margin: 5px 0;
+    border-radius: 5px;
+    border: 1px solid #ddd;
 }
