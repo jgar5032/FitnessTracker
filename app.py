@@ -293,6 +293,24 @@ def metrics():
     return render_template('metrics.html', user=user, bmi=bmi, target_heart_rate=target_heart_rate,
                            avg_steps=avg_steps, avg_duration=avg_duration)
 
+@app.route('/progress')
+def progress():
+    if 'user_id' not in session:
+        flash('Please log in to access your progress.')
+        return redirect(url_for('login'))
+
+    user = User.query.get(session['user_id'])
+    activities = Activity.query.filter_by(user_id=user.id).all()
+
+    # Calculate totals
+    total_distance = round(sum(a.distance for a in activities if a.distance), 2) if activities else 0
+    total_steps = sum(a.steps for a in activities if a.steps) if activities else 0
+    total_calories = round(sum(a.calories for a in activities if a.calories), 2) if activities else 0
+
+    return render_template('progress.html', activities=activities, total_distance=total_distance,
+                           total_steps=total_steps, total_calories=total_calories)
+
+
 
 @app.route('/logout')
 def logout():
