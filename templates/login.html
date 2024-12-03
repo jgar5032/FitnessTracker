@@ -1,17 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <!-- Login form -->
     <h2>Login</h2>
     <form method="POST">
+        <!-- Email input -->
         <label for="email">Email:</label>
         <input type="email" name="email" id="email" required>
 
+        <!-- Password input -->
         <label for="password">Password:</label>
         <input type="password" name="password" id="password" required>
 
+        <!-- Login button -->
         <button type="submit">Login</button>
     </form>
 
+    <!-- Link to register for users without an account -->
     <p>Don't have an account? <a href="{{ url_for('register') }}">Register here</a>.</p>
 </div>
 {% endblock %}

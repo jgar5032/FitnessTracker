@@ -1,50 +1,55 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-<h2>Your Goals</h2>
-<form method="POST">
-    <label for="goal_type">Goal Type:</label>
-    <input type="text" name="goal_type" id="goal_type" required><br>
+    <h2>Your Goals</h2>
 
-    <label for="target_value">Target Value:</label>
-    <input type="number" name="target_value" id="target_value" required><br>
+    <!-- Form to add a new goal -->
+    <form method="POST">
+        <label for="goal_type">Goal Type:</label>
+        <input type="text" name="goal_type" id="goal_type" required><br>
 
-    <label for="end_date">End Date:</label>
-    <input type="date" name="end_date" id="end_date" required><br>
+        <label for="target_value">Target Value:</label>
+        <input type="number" name="target_value" id="target_value" required><br>
 
-    <button type="submit">Add Goal</button>
-</form>
+        <label for="end_date">End Date:</label>
+        <input type="date" name="end_date" id="end_date" required><br>
 
-<h3>Active Goals</h3>
-<table>
-    <thead>
-        <tr>
-            <th>Goal Type</th>
-            <th>Target</th>
-            <th>Progress</th>
-            <th>End Date</th>
-            <th>Status</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for goal in goals %}
-        <tr>
-            <td>{{ goal.goal_type }}</td>
-            <td>{{ goal.target_value }}</td>
-            <td>{{ goal.progress }}</td>
-            <td>{{ goal.end_date.strftime('%Y-%m-%d') }}</td>
-            <td>
-                <form method="POST" action="{{ url_for('update_goal', goal_id=goal.id) }}">
-                    <select name="status">
-                        <option value="met" {% if goal.progress >= goal.target_value %}selected{% endif %}>Met</option>
-                        <option value="not_met" {% if goal.progress < goal.target_value %}selected{% endif %}>Not Met</option>
-                    </select>
-                    <button type="submit">Update</button>
-                </form>
-            </td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        <button type="submit">Add Goal</button>
+    </form>
+
+    <!-- Display active goals -->
+    <h3>Active Goals</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Goal Type</th>
+                <th>Target</th>
+                <th>Progress</th>
+                <th>End Date</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for goal in goals %}
+            <tr>
+                <!-- Display goal details -->
+                <td>{{ goal.goal_type }}</td>
+                <td>{{ goal.target_value }}</td>
+                <td>{{ goal.progress }}</td>
+                <td>{{ goal.end_date.strftime('%Y-%m-%d') }}</td>
+                <td>
+                    <!-- Form to update goal status -->
+                    <form method="POST" action="{{ url_for('update_goal', goal_id=goal.id) }}">
+                        <select name="status">
+                            <option value="met" {% if goal.progress >= goal.target_value %}selected{% endif %}>Met</option>
+                            <option value="not_met" {% if goal.progress < goal.target_value %}selected{% endif %}>Not Met</option>
+                        </select>
+                        <button type="submit">Update</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock %}

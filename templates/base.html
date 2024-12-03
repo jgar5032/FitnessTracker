@@ -1,15 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Link to external stylesheet -->
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    
+    <!-- Character encoding and responsive design meta tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Page title -->
     <title>Fitness Tracker</title>
 </head>
 <body>
+    <!-- Navigation bar -->
     <nav>
+        <!-- Always visible links -->
         <a href="{{ url_for('index') }}">Home</a>
         {% if 'user_id' in session %}
+            <!-- Links visible when user is logged in -->
             <a href="{{ url_for('profile') }}">Profile</a>
             <a href="{{ url_for('add_activity') }}">Log Activity</a>
             <a href="{{ url_for('goals') }}">Goals</a>
@@ -18,12 +26,16 @@
             <a href="{{ url_for('metrics') }}">Metrics</a>
             <a href="{{ url_for('logout') }}">Logout</a>
         {% else %}
+            <!-- Links visible when user is not logged in -->
             <a href="{{ url_for('login') }}">Login</a>
             <a href="{{ url_for('register') }}">Register</a>
         {% endif %}
     </nav>
       
+    <!-- Horizontal line separator -->
     <hr>
+    
+    <!-- Placeholder for page-specific content -->
     {% block content %}{% endblock %}
 </body>
 </html>

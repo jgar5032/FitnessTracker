@@ -1,14 +1,15 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <!-- Page title -->
     <h1>Your Progress</h1>
 
-    <!-- Display total stats -->
+    <!-- Display total statistics -->
     <p><strong>Total Distance:</strong> {{ total_distance }} km</p>
     <p><strong>Total Steps:</strong> {{ total_steps }}</p>
     <p><strong>Total Calories Burned:</strong> {{ total_calories }}</p>
 
-    <!-- Table of completed activities -->
+    <!-- Display completed activities in a table -->
     <h3>Completed Activities</h3>
     {% if activities %}
     <table>
@@ -23,6 +24,7 @@
             </tr>
         </thead>
         <tbody>
+            <!-- Loop through and display each activity -->
             {% for activity in activities %}
             <tr>
                 <td>{{ activity.activity_type }}</td>
@@ -36,6 +38,7 @@
         </tbody>
     </table>
     {% else %}
+    <!-- Message if no activities are logged -->
     <p>You have not logged any activities yet.</p>
     {% endif %}
 </div>

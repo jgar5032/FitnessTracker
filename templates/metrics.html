@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <!-- Display user's metrics -->
     <h1>Your Metrics</h1>
     <table>
         <thead>
@@ -10,18 +11,22 @@
             </tr>
         </thead>
         <tbody>
+            <!-- Display Body Mass Index (BMI) -->
             <tr>
                 <td>Body Mass Index (BMI)</td>
                 <td>{{ bmi if bmi else "N/A" }}</td>
             </tr>
+            <!-- Display Target Heart Rate -->
             <tr>
                 <td>Target Heart Rate</td>
                 <td>{{ target_heart_rate if target_heart_rate else "N/A" }}</td>
             </tr>
+            <!-- Display Average Steps per Day -->
             <tr>
                 <td>Average Steps per Day</td>
                 <td>{{ avg_steps if avg_steps else "N/A" }}</td>
             </tr>
+            <!-- Display Average Activity Duration -->
             <tr>
                 <td>Average Activity Duration (minutes)</td>
                 <td>{{ avg_duration if avg_duration else "N/A" }}</td>

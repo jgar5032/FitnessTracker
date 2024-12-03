@@ -1,23 +1,32 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <!-- Page Title -->
     <h1>Log Activity</h1>
+    
+    <!-- Activity Log Form -->
     <form method="POST" action="{{ url_for('add_activity') }}">
+        <!-- Input for activity type -->
         <label for="activity_type">Activity Type:</label>
         <input type="text" name="activity_type" id="activity_type" required>
 
+        <!-- Input for duration in minutes -->
         <label for="duration">Duration (minutes):</label>
         <input type="number" name="duration" id="duration" required>
 
+        <!-- Input for distance in kilometers -->
         <label for="distance">Distance (km):</label>
         <input type="number" step="0.1" name="distance" id="distance">
 
+        <!-- Input for steps -->
         <label for="steps">Steps:</label>
         <input type="number" name="steps" id="steps">
 
+        <!-- Input for calories burned -->
         <label for="calories">Calories Burned:</label>
         <input type="number" name="calories" id="calories">
 
+        <!-- Submit button to log activity -->
         <button type="submit">Log Activity</button>
     </form>
 </div>

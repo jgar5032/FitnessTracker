@@ -1,16 +1,22 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
-<h1>Your Fitness Goals</h1>
-{% if user.goals %}
-<ul>
-    {% for goal in user.goals %}
+    <!-- Header for fitness goals -->
+    <h1>Your Fitness Goals</h1>
+
+    <!-- Display goals if any exist -->
+    {% if user.goals %}
+    <ul>
+        {% for goal in user.goals %}
         <li>{{ goal.goal_type }}: {{ goal.target_value }} (Progress: {{ goal.progress }})</li>
-    {% endfor %}
-</ul>
-{% else %}
-<p>No goals set yet.</p>
-{% endif %}
-<a href="{{ url_for('add_goal') }}">Set a New Goal</a>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <!-- Message if no goals are set -->
+    <p>No goals set yet.</p>
+    {% endif %}
+
+    <!-- Link to add a new goal -->
+    <a href="{{ url_for('add_goal') }}">Set a New Goal</a>
 </div>
 {% endblock %}

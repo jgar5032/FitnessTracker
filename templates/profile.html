@@ -1,9 +1,11 @@
 {% extends "base.html" %}
 {% block content %}
 <div class="container">
+    <!-- Welcome user and show email -->
     <h1>Welcome, {{ user.name }}</h1>
     <p>Email: {{ user.email }}</p>
 
+    <!-- Display user profile details -->
     <h2>Your Profile Details</h2>
     <p><strong>Height:</strong> {{ user.height or "Not set" }} cm</p>
     <p><strong>Weight:</strong> {{ user.weight or "Not set" }} kg</p>
@@ -11,6 +13,7 @@
     <p><strong>Gender:</strong> {{ user.gender or "Not set" }}</p>
     <p><strong>Fitness Level:</strong> {{ user.fitness_level or "Not set" }}</p>
 
+    <!-- Form to update profile details -->
     <h2>Update Your Profile</h2>
     <form method="POST">
         <label for="height">Height (cm):</label>
@@ -38,6 +41,7 @@
             <option value="Advanced" {% if user.fitness_level == 'Advanced' %}selected{% endif %}>Advanced</option>
         </select>
 
+        <!-- Submit button -->
         <button type="submit">Update Profile</button>
     </form>
 </div>

@@ -2,13 +2,15 @@
 {% block content %}
 <div class="container">
     <h2>Your Friends</h2>
+    
+    <!-- Form to send a friend request -->
     <form method="POST">
         <label for="friend_email">Friend's Email:</label>
         <input type="email" name="friend_email" id="friend_email" required>
         <button type="submit">Send Friend Request</button>
     </form>
 
-    <!-- Display incoming friend requests -->
+    <!-- Display pending friend requests -->
     <h3>Pending Friend Requests</h3>
     {% if incoming_requests %}
     <table>
@@ -21,8 +23,10 @@
         <tbody>
             {% for request in incoming_requests %}
             <tr>
+                <!-- Display sender details -->
                 <td>{{ request.user.name }} ({{ request.user.email }})</td>
                 <td>
+                    <!-- Form to accept or reject request -->
                     <form method="POST" action="{{ url_for('update_friendship', friendship_id=request.id) }}">
                         <button name="status" value="accepted">Accept</button>
                         <button name="status" value="rejected">Reject</button>
@@ -36,9 +40,10 @@
     <p>No pending friend requests.</p>
     {% endif %}
 
-    <!-- Display comparison section -->
+    <!-- Section to compare friends -->
     <h3>Compare Friends</h3>
     <form method="GET" action="{{ url_for('friends') }}">
+        <!-- Dropdown for sorting -->
         <label for="sort_category">Sort By:</label>
         <select name="sort" id="sort_category" onchange="this.form.submit()">
             <option value="bmi" {% if sort_category == 'bmi' %}selected{% endif %}>BMI (Lower is better)</option>
@@ -47,6 +52,7 @@
         </select>
     </form>
     
+    <!-- Display comparison table -->
     <table>
         <thead>
             <tr>
@@ -62,6 +68,7 @@
         <tbody>
             {% for friend in accepted_friends %}
             <tr>
+                <!-- Display friend metrics -->
                 <td>{{ friend.name }}</td>
                 <td>{{ friend.email }}</td>
                 <td>{{ friend.bmi if friend.bmi is not none else 'N/A' }}</td>
