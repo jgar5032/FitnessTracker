@@ -4,6 +4,17 @@ CS480 Final Project
 Names: Ayush Panda, Jose Garcia Rowlands, Shreeya Ryali, Pritika Bhattacharya
 Fitness Tracker System Project
 
+How To Run Program:
+Create a virtual environment: python3 -m venv venv
+
+Activate virtual environment: (macOS/Linux): source venv/bin/activate (Windows): venv\Scripts\activate
+
+Install dependencies: pip install -r requirements.txt
+
+Start flask development server: flask run
+
+Open browser: http://127.0.0.1:5000
+
 Overview: This project aims to build a fitness tracker system to track activities, set goals, monitor progress, and
 analyze data. There are two primary roles: users and administrators. Users can log activities, set personal goals,
 track progress, and engage in social challenges with friends. Administrators can manage user accounts, view system
