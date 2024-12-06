@@ -11,6 +11,17 @@ Activate virtual environment: (macOS/Linux): source venv/bin/activate (Windows):
 
 Install dependencies: pip install -r requirements.txt
 
+start a mysql server: mysql.server start
+
+login to mysql (just hit enter for password): mysql -u root -p
+
+create the database and your user:
+
+CREATE DATABASE fitness_tracker;
+CREATE USER 'demo_user'@'localhost' IDENTIFIED BY 'demo_pass';
+GRANT ALL PRIVILEGES ON fitness_tracker.* TO 'demo_user'@'localhost';
+FLUSH PRIVILEGES;
+
 Start flask development server: flask run
 
 Open browser: http://127.0.0.1:5000
