@@ -21,6 +21,8 @@ CREATE DATABASE fitness_tracker;
 CREATE USER 'demo_user'@'localhost' IDENTIFIED BY 'demo_pass';
 GRANT ALL PRIVILEGES ON fitness_tracker.* TO 'demo_user'@'localhost';
 FLUSH PRIVILEGES;
+EXIT
+
 
 Start flask development server: flask run
 
