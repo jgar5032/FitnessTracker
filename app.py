@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, flash, session
 from flask_migrate import Migrate
+from flask_sqlalchemy import SQLAlchemy
 from werkzeug.security import generate_password_hash, check_password_hash
 from models import db, User, Goal, Activity, Friendship
 import os
@@ -8,25 +9,21 @@ from datetime import datetime
 app = Flask(__name__)
 app.secret_key = 'your_secret_key'
 
-# Ensure the database directory exists
-os.makedirs('instance', exist_ok=True)
-
-# Database configuration
-basedir = os.path.abspath(os.path.dirname(__file__))
-app.config['SQLALCHEMY_DATABASE_URI'] = f'sqlite:///{os.path.join(basedir, "instance", "fitness_tracker.db")}'
+# Database configuration for MySQL
+# MySQL Configuration
+app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://demo_user:demo_pass@localhost/fitness_tracker'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Initialize database and migration
 db.init_app(app)
-migrate = Migrate(app, db)
 
-# Ensure tables are created once
+# If you want to ensure tables are created (not recommended in production, rely on migrations)
+# You can keep the before_request if you like:
 first_request_done = False
 @app.before_request
 def create_tables_once():
     global first_request_done
     if not first_request_done:
-        db.create_all()
+        db.create_all()  # This will now create all tables in the MySQL DB
         first_request_done = True
 
 # Home page
